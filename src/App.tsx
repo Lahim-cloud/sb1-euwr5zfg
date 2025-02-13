@@ -12,6 +12,7 @@ import PricingCalculator from './pages/PricingCalculator';
 import Projects from './pages/Projects';
 import OfficeRent from './pages/OfficeRent';
 import HealthInsurance from './pages/HealthInsurance';
+import PresentationPage from './pages/PresentationPage'; // Import PresentationPage
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
       <Route path="/projects" element={<Projects />} />
       <Route path="/office-rent" element={<OfficeRent />} />
       <Route path="/health-insurance" element={<HealthInsurance />} />
+      <Route path="/presentation" element={<PresentationPage />} /> {/* Add route for PresentationPage */}
       <Route path="/" element={<Navigate to="/signin" replace />} />
     </Routes>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Users, Building2, Package, AppWindow, Heart, Scale, Settings, Calculator, Calendar } from 'lucide-react';
+import { Users, Building2, Package, AppWindow, Heart, Scale, Settings, Calculator, Calendar, Presentation } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCostsStore } from '../data/costs';
 import { CostEditor } from '../components/CostEditor';
@@ -170,6 +170,13 @@ function Dashboard() {
           >
             <Calculator className="w-5 h-5" />
             <span>Price Calculator</span>
+          </Link>
+          <Link
+            to="/presentation"
+            className="px-4 py-2 bg-gradient-to-r from-[#a47148] to-black text-[#fefae0] rounded-lg flex items-center gap-2"
+          >
+            <Presentation className="w-5 h-5" />
+            <span>Presentation</span>
           </Link>
         </div>
       </header>

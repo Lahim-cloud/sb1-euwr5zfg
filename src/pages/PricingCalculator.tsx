@@ -40,6 +40,7 @@ export default function PricingCalculator() {
   });
 
   const [profitMargin, setProfitMargin] = useState(20);
+  const [taxPercentage, setTaxPercentage] = useState(10); // New state for tax percentage
 
   // Fetch active projects on mount
   useEffect(() => {
@@ -116,7 +117,9 @@ export default function PricingCalculator() {
   const allocatedOverhead = (weeklyOverhead * projectDetails.durationInWeeks) * (overheadCosts.allocationPercentage / 100);
   const totalCosts = allocatedOverhead;
   const profitAmount = totalCosts * (profitMargin / 100);
-  const projectPrice = totalCosts + profitAmount;
+  const subtotal = totalCosts + profitAmount; // Calculate subtotal before tax
+  const taxAmount = subtotal * (taxPercentage / 100); // Calculate tax amount
+  const projectPrice = subtotal + taxAmount; // Calculate final project price
 
   // Get active projects for display
   const activeProjects = projects
@@ -405,6 +408,32 @@ export default function PricingCalculator() {
                 </div>
               </div>
             </div>
+
+            {/* Tax Percentage */}
+            <div className="bg-[#f5f5dc] rounded-xl p-6 shadow-sm">
+              <div className="flex items-center gap-2 mb-4">
+                <DollarSign className="w-5 h-5 text-stone-900" />
+                <h2 className="text-xl font-semibold">Tax</h2>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-stone-700 mb-1">
+                  Tax Percentage
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={taxPercentage}
+                    onChange={(e) => setTaxPercentage(parseFloat(e.target.value) || 0)}
+                    className="w-full pr-8 pl-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-900"
+                  />
+                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                    <Percent className="w-4 h-4 text-stone-400" />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Results Section */}
@@ -442,6 +471,22 @@ export default function PricingCalculator() {
                   <div className="text-right font-medium">{profitMargin}%</div>
                   <div className="text-stone-600">Profit Amount</div>
                   <div className="text-right font-medium">{formatCurrency(profitAmount)}</div>
+                </div>
+              </div>
+
+              {/* Subtotal */}
+              <div className="flex justify-between py-4 border-t border-b border-stone-200">
+                <div className="font-semibold">Subtotal (Before Tax)</div>
+                <div className="font-semibold">{formatCurrency(subtotal)}</div>
+              </div>
+
+              {/* Tax */}
+              <div className="py-4 space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-stone-600">Tax Percentage</div>
+                  <div className="text-right font-medium">{taxPercentage}%</div>
+                  <div className="text-stone-600">Tax Amount</div>
+                  <div className="text-right font-medium">{formatCurrency(taxAmount)}</div>
                 </div>
               </div>
 
