@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Plus, Pencil, Trash2, X, Calendar, Clock, AlertTriangle, DollarSign } from 'lucide-react';
+import { ArrowLeft, Plus, Pencil, Trash2, X, Calendar, Clock, AlertTriangle, DollarSign, Printer } from 'lucide-react';
 import { useProjectsStore, Project } from '../data/projects';
 import { useCostsStore } from '../data/costs';
+import { generateProjectPDF } from '../utils/pdfGenerator';
 
 type ProjectFormData = Omit<Project, 'id' | 'durationInWeeks' | 'remainingWeeks' | 'profitMargin'>;
 
-export default function Projects() {
+function Projects() {
   const { 
     projects, 
     loading, 
@@ -17,6 +18,7 @@ export default function Projects() {
     deleteProject,
     calculateProfitMargin 
   } = useProjectsStore();
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const monthlyOverhead = useCostsStore((state) => state.costs.reduce((sum, cost) => sum + cost.monthlyCost, 0));
@@ -139,16 +141,27 @@ export default function Projects() {
               const profitMargin = calculateProfitMargin(project.price, costs);
               
               return (
-                <div
-                  key={project.id}
-                  className="bg-[#fefae0] rounded-xl p-6 shadow-sm space-y-4"
-                >
+                <div key={project.id} className="bg-[#fefae0] rounded-xl p-6 shadow-sm">
                   <div className="flex justify-between items-start">
                     <div>
                       <h2 className="text-xl font-semibold text-stone-900">{project.name}</h2>
                       <p className="text-stone-600 mt-1">{project.description}</p>
                     </div>
                     <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => {
+                          const costs = {
+                            overhead: calculateProjectCost(project),
+                            profit: project.price - calculateProjectCost(project),
+                            profitMargin: calculateProfitMargin(project.price, calculateProjectCost(project))
+                          };
+                          generateProjectPDF(project, costs);
+                        }}
+                        className="px-4 py-2 bg-gradient-to-r from-[#a47148] to-black text-[#fefae0] rounded-lg flex items-center gap-2"
+                      >
+                        <Printer className="w-4 h-4" />
+                        <span>Print Details</span>
+                      </button>
                       <button
                         onClick={() => {
                           setFormData({
@@ -176,7 +189,7 @@ export default function Projects() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-5 gap-4">
+                  <div className="grid grid-cols-5 gap-4 mt-4">
                     <div>
                       <div className="text-sm text-stone-600">Status</div>
                       <span className={`mt-1 inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(project.status)}`}>
@@ -201,7 +214,7 @@ export default function Projects() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-6 pt-4 border-t border-stone-200">
+                  <div className="flex items-center gap-6 pt-4 border-t border-stone-200 mt-4">
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4 text-stone-400" />
                       <span className="text-sm text-stone-600">
@@ -382,3 +395,6 @@ export default function Projects() {
     </div>
   );
 }
+
+// Add the default export
+export default Projects;
