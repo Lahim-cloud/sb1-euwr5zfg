@@ -8,21 +8,21 @@ import { generateProjectPDF } from '../utils/pdfGenerator';
 type ProjectFormData = Omit<Project, 'id' | 'durationInWeeks' | 'remainingWeeks' | 'profitMargin'>;
 
 function Projects() {
-  const { 
-    projects, 
-    loading, 
-    error, 
-    fetchProjects, 
-    addProject, 
-    updateProject, 
+  const {
+    projects,
+    loading,
+    error,
+    fetchProjects,
+    addProject,
+    updateProject,
     deleteProject,
-    calculateProfitMargin 
+    calculateProfitMargin
   } = useProjectsStore();
-  
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const monthlyOverhead = useCostsStore((state) => state.costs.reduce((sum, cost) => sum + cost.monthlyCost, 0));
-  
+
   const [formData, setFormData] = useState<ProjectFormData>({
     name: '',
     description: '',
@@ -81,8 +81,8 @@ function Projects() {
   return (
     <div className="min-h-screen bg-[#fefae0] p-6">
       <div className="max-w-7xl mx-auto">
-        <Link 
-          to="/dashboard" 
+        <Link
+          to="/dashboard"
           className="inline-flex items-center gap-2 text-stone-600 hover:text-stone-900 mb-6"
         >
           <ArrowLeft className="w-5 h-5" />
@@ -139,7 +139,7 @@ function Projects() {
             projects.map((project) => {
               const costs = calculateProjectCost(project);
               const profitMargin = calculateProfitMargin(project.price, costs);
-              
+
               return (
                 <div key={project.id} className="bg-[#fefae0] rounded-xl p-6 shadow-sm">
                   <div className="flex justify-between items-start">
@@ -150,6 +150,7 @@ function Projects() {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => {
+                          console.log("Print button clicked for project:", project.name); // Ensure log is present
                           const costs = {
                             overhead: calculateProjectCost(project),
                             profit: project.price - calculateProjectCost(project),
@@ -396,5 +397,4 @@ function Projects() {
   );
 }
 
-// Add the default export
 export default Projects;
